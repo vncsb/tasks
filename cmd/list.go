@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	tasksdb "github.com/vncsb/tasks"
 )
 
 // listCmd represents the list command
@@ -26,7 +27,14 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all incomplete tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		tasks, err := tasksdb.ListTasks()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		for _, task := range tasks {
+			fmt.Printf("%v. %v", task.ID, task.Description)
+		}
 	},
 }
 

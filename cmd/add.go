@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +28,13 @@ var addCmd = &cobra.Command{
 	Short: "Adds new task to list",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		description := strings.Join(args, " ")
+		err := tasksdb
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("Task added with success!")
 	},
 }
 
