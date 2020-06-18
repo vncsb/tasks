@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/vncsb/tasks/tasksdb"
 )
 
 // addCmd represents the add command
@@ -29,7 +30,7 @@ var addCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		description := strings.Join(args, " ")
-		err := tasksdb
+		err := tasksdb.AddTask(description)
 		if err != nil {
 			fmt.Println(err)
 		}

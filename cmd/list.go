@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	tasksdb "github.com/vncsb/tasks"
+	"github.com/vncsb/tasks/tasksdb"
 )
 
 // listCmd represents the list command
