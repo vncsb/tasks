@@ -23,10 +23,10 @@ import (
 	"github.com/vncsb/tasks/tasksdb"
 )
 
-// doCmd represents the do command
-var doCmd = &cobra.Command{
-	Use:   "do [task id]",
-	Short: "Mark task as complete",
+// rmCmd represents the rm command
+var rmCmd = &cobra.Command{
+	Use:   "rm [task id]",
+	Short: "Removes a task",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		idString := args[0]
@@ -36,16 +36,26 @@ var doCmd = &cobra.Command{
 			return
 		}
 
-		description, err := tasksdb.DoTask(id)
+		description, err := tasksdb.RemoveTask(id)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		fmt.Printf("You have completed the \"%v\" task.", description)
+		fmt.Printf("You have deleted the \"%v\" task.", description)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(doCmd)
+	rootCmd.AddCommand(rmCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// rmCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// rmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

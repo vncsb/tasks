@@ -4,14 +4,16 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/boltdb/bolt"
 )
 
 type Task struct {
-	ID          int
-	Description string
-	Done        bool
+	ID            int
+	Description   string
+	Done          bool
+	DateCompleted time.Time
 }
 
 func setupDB() (*bolt.DB, error) {
@@ -86,6 +88,7 @@ func DoTask(id int) (string, error) {
 		}
 
 		task.Done = true
+		task.DateCompleted = time.Now()
 
 		v, err = json.Marshal(task)
 		if err != nil {
@@ -102,7 +105,7 @@ func DoTask(id int) (string, error) {
 	return task.Description, nil
 }
 
-func ListTasks() ([]Task, error) {
+func ListTasks(filter func(Task) bool) ([]Task, error) {
 	db, err := setupDB()
 	if err != nil {
 		return nil, errors.New("Could not open database file")
@@ -120,8 +123,7 @@ func ListTasks() ([]Task, error) {
 				return errors.New("Could note decode task")
 			}
 
-			if !task.Done {
-				task.ID = btoi(k)
+			if filter(task) {
 				tasks = append(tasks, task)
 			}
 
@@ -133,6 +135,37 @@ func ListTasks() ([]Task, error) {
 	}
 
 	return tasks, nil
+}
+
+func RemoveTask(id int) (string, error) {
+	db, err := setupDB()
+	if err != nil {
+		return "", errors.New("Could not open database file")
+	}
+
+	var task Task
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("tasks"))
+
+		v := b.Get(itob(id))
+		if v == nil {
+			return errors.New("Task not found")
+		}
+
+		err := json.Unmarshal(v, &task)
+		if err != nil {
+			return errors.New("Could note decode task")
+		}
+
+		return b.Delete(itob(task.ID))
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return task.Description, nil
 }
 
 func itob(v int) []byte {
