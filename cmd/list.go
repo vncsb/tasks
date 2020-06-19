@@ -40,6 +40,7 @@ var listCmd = &cobra.Command{
 			return
 		}
 
+		fmt.Println("You have the following tasks:")
 		for _, task := range tasks {
 			fmt.Printf("%v. %v\n", task.ID, task.Description)
 		}

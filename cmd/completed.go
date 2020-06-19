@@ -46,6 +46,7 @@ var completedCmd = &cobra.Command{
 			return
 		}
 
+		fmt.Println("You have finished the following tasks today:")
 		for _, task := range tasks {
 			fmt.Printf("%v. %v\n", task.ID, task.Description)
 		}
