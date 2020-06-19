@@ -33,6 +33,7 @@ var addCmd = &cobra.Command{
 		err := tasksdb.AddTask(description)
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
 
 		fmt.Println("Task added with success!")

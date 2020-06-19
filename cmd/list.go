@@ -30,10 +30,16 @@ var listCmd = &cobra.Command{
 		tasks, err := tasksdb.ListTasks()
 		if err != nil {
 			fmt.Println(err)
+			return
+		}
+
+		if len(tasks) == 0 {
+			fmt.Println("No tasks for now!")
+			return
 		}
 
 		for _, task := range tasks {
-			fmt.Printf("%v. %v", task.ID, task.Description)
+			fmt.Printf("%v. %v\n", task.ID, task.Description)
 		}
 	},
 }

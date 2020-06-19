@@ -53,6 +53,8 @@ func AddTask(description string) error {
 		id64, _ := b.NextSequence()
 		id := int(id64)
 
+		task.ID = id
+
 		buf, err := json.Marshal(task)
 		if err != nil {
 			return errors.New("Could not encode task")
@@ -62,13 +64,15 @@ func AddTask(description string) error {
 	})
 }
 
-func DoTask(id int) error {
+func DoTask(id int) (string, error) {
 	db, err := setupDB()
 	if err != nil {
-		return errors.New("Could not open database file")
+		return "", errors.New("Could not open database file")
 	}
 
-	return db.Update(func(tx *bolt.Tx) error {
+	var task Task
+
+	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("tasks"))
 		v := b.Get(itob(id))
 
@@ -76,8 +80,7 @@ func DoTask(id int) error {
 			return errors.New("Task not found")
 		}
 
-		var task Task
-		err := json.Unmarshal(v, task)
+		err := json.Unmarshal(v, &task)
 		if err != nil {
 			return errors.New("Could not decode task")
 		}
@@ -91,6 +94,12 @@ func DoTask(id int) error {
 
 		return b.Put(itob(task.ID), v)
 	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return task.Description, nil
 }
 
 func ListTasks() ([]Task, error) {
@@ -106,12 +115,13 @@ func ListTasks() ([]Task, error) {
 
 		return b.ForEach(func(k, v []byte) error {
 			var task Task
-			err := json.Unmarshal(v, task)
+			err := json.Unmarshal(v, &task)
 			if err != nil {
 				return errors.New("Could note decode task")
 			}
 
 			if !task.Done {
+				task.ID = btoi(k)
 				tasks = append(tasks, task)
 			}
 
@@ -129,4 +139,8 @@ func itob(v int) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))
 	return b
+}
+
+func btoi(v []byte) int {
+	return int(binary.BigEndian.Uint64(v))
 }

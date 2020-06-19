@@ -13,3 +13,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+tasks.db
+tasks.db.lock
+.vscode/launch.json

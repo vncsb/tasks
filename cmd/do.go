@@ -17,17 +17,32 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
+	"github.com/vncsb/tasks/tasksdb"
 )
 
 // doCmd represents the do command
 var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "Mark task as complete",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(args)
+		idString := args[0]
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			fmt.Println("Task ID required")
+			return
+		}
+
+		description, err := tasksdb.DoTask(id)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Printf("You have completed the \"%v\" task.", description)
 	},
 }
 
