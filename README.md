@@ -1,6 +1,6 @@
 # Tasks
 A simple command line application to keep track of your tasks.
-Made in Go + Cobra.
+Made in Go + Cobra + BoltDB.
 
 # About
 This is one of various Go Exercises of [Gophercises](https://gophercises.com/).
