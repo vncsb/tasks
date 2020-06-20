@@ -4,5 +4,5 @@ Made in Go + Cobra.
 
 # About
 This is one of various Go Exercises of [Gophercises](https://gophercises.com/).
-For more details about this application check out "CLI Task Manager" in [Gophercises](https://gophercises.com/).
+For more details about this application check out [CLI Task Manager](https://github.com/gophercises/task).
 
